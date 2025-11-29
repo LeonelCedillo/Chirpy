@@ -9,6 +9,7 @@ const app = express();
 const PORT = 8080;
 
 app.use(middlewareLogResponses);
+app.use(express.json()); // Built-in JSON body parsing middleware
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
 app.get("/api/healthz", handlerReadiness);

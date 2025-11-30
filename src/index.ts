@@ -4,6 +4,8 @@ import { handlerChirpsValidate } from "./api/chirps.js";
 import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
+import { BadRequestError,  } from "./api/errors.js";
+import { responseWithError } from "./api/json.js";
 
 
 const app = express();
@@ -29,9 +31,10 @@ app.post("/api/validate_chirp", async (req, res, next) => {
   try {
     await handlerChirpsValidate(req, res);
   } catch (err) {
-    next(err); // Pass the error to Express
+	next(err); // Pass the error to Express
   }
 });
+
 
 
 // Error handling middleware in non-async code

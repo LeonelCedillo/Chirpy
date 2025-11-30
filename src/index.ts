@@ -1,11 +1,11 @@
 import express from "express";
-import { middlewareLogResponses, middlewareMetricsInc, errorMiddleWare } from "./api/middleware.js";
-import { handlerChirpsValidate } from "./api/chirps.js";
-import { handlerReadiness } from "./api/readiness.js";
-import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
-import { BadRequestError,  } from "./api/errors.js";
-import { responseWithError } from "./api/json.js";
+import { handlerMetrics } from "./api/metrics.js";
+import { handlerReadiness } from "./api/readiness.js";
+import { handlerChirpsValidate } from "./api/chirps.js";
+import { errorMiddleWare, middlewareMetricsInc, 
+  middlewareLogResponses, 
+} from "./api/middleware.js";
 
 
 const app = express();
@@ -34,7 +34,6 @@ app.post("/api/validate_chirp", async (req, res, next) => {
 	next(err); // Pass the error to Express
   }
 });
-
 
 
 // Error handling middleware in non-async code

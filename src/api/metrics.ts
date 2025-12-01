@@ -4,7 +4,7 @@ import { config } from "../config.js";
 
 export async function handlerMetrics(_: Request, res: Response) {
     res.set("Content-Type", "text/html; charset=utf-8");
-    const hits = config.fileServerHits;
+    const hits = config.api.fileServerHits;
     res.send(`
         <html>
             <body>

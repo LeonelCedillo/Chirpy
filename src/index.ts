@@ -10,13 +10,11 @@ import { errorMiddleWare, middlewareMetricsInc,
   middlewareLogResponses, 
 } from "./api/middleware.js";
 import { config } from "./config.js";
-
-const app = express();
-const PORT = 8080;
-
+import { handlerUsersCreate } from "./api/users.js";
 
 const migrationClient = postgres(config.db.url, { max: 1 });
 await migrate(drizzle(migrationClient), config.db.migrationConfig);
+const app = express();
 
 
 app.use(middlewareLogResponses);
@@ -41,14 +39,16 @@ app.post("/api/validate_chirp", async (req, res, next) => {
 	next(err); // Pass the error to Express
   }
 });
-
+app.post("/api/users", (req, res, next) => {
+  Promise.resolve(handlerUsersCreate(req, res)).catch(next);
+});
 
 // Error handling middleware in non-async code
 app.use(errorMiddleWare);
 
 
-app.listen(PORT, () => {
-	console.log(`Server is running at http://localhost:${PORT}`);
+app.listen(config.api.port, () => {
+	console.log(`Server is running at http://localhost:${config.api.port}`);
 });
 
 

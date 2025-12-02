@@ -5,7 +5,7 @@ import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { handlerReset } from "./api/reset.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReadiness } from "./api/readiness.js";
-import { handlerChirpsValidate } from "./api/chirps.js";
+import { handlerChirpsCreate } from "./api/chirps.js";
 import { errorMiddleWare, middlewareMetricsInc, 
   middlewareLogResponses, 
 } from "./api/middleware.js";
@@ -23,25 +23,26 @@ app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
 
 // Catching errors in async code:
-app.get("/api/healthz", (req, res, next) => {
-  Promise.resolve(handlerReadiness(req, res)).catch(next);
-});
+app.get("/api/healthz", async (req, res, next) => {
+  try {
+    await handlerReadiness(req, res);
+  } catch (err) {
+	  next(err); // Pass the error to Express
+  }
+}); // Or this way:
 app.get("/admin/metrics", (req, res, next) => {
   Promise.resolve(handlerMetrics(req, res)).catch(next);
 });
 app.post("/admin/reset", (req, res, next) => {
   Promise.resolve(handlerReset(req, res)).catch(next);
-}); // or this way:
-app.post("/api/validate_chirp", async (req, res, next) => {
-  try {
-    await handlerChirpsValidate(req, res);
-  } catch (err) {
-	next(err); // Pass the error to Express
-  }
 });
 app.post("/api/users", (req, res, next) => {
   Promise.resolve(handlerUsersCreate(req, res)).catch(next);
 });
+app.post("/api/chirps", (req, res, next) => {
+  Promise.resolve(handlerChirpsCreate(req, res)).catch(next);
+});
+
 
 // Error handling middleware in non-async code
 app.use(errorMiddleWare);

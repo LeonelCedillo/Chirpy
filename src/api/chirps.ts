@@ -1,23 +1,38 @@
 import type { Request, Response } from "express";
 import { responseWithJSON } from "./json.js";
 import { BadRequestError } from "./errors.js";
+import { createChirp } from "../db/queries/chirps.js";
 
 
-export async function handlerChirpsValidate(req: Request, res: Response) {
+export async function handlerChirpsCreate(req: Request, res: Response) {
     type parameters = {
         body: string;
+        userId: string;
     }
-    let params: parameters = req.body;
+    const params: parameters = req.body;
+    const cleaned = validateChirp(params.body);    
+    const chirp = await createChirp({ body: cleaned, userId: params.userId })
+    if (!chirp) {
+        throw new Error("Could not create chirp");
+    }
+    responseWithJSON(res, 201, chirp);
+}
 
+
+function validateChirp(body: string) {
     const maxChirpLength = 140;
-    if (params.body.length > maxChirpLength) {
+    if (body.length > maxChirpLength) {
         throw new BadRequestError(
             `Chirp is too long. Max length is ${maxChirpLength}`
         );
     }
-
-    const words = params.body.split(" ");
     const badWords = ["kerfuffle", "sharbert", "fornax"];
+    return getCleanedBody(body, badWords);
+}
+
+
+function getCleanedBody(body: string, badWords: string[]) {
+    const words = body.split(" ");
     for (let i = 0; i < words.length; i++) {
         const word = words[i].toLowerCase();
         if (badWords.includes(word)) {
@@ -25,28 +40,7 @@ export async function handlerChirpsValidate(req: Request, res: Response) {
         }
     }
     const cleaned = words.join(" ");
-
-    responseWithJSON(res, 200, { cleanedBody: cleaned });
-
-    // let body = ""; // 1. Initialize a string buffer
-    // 2. Listen for data events
-    // req.on("data", (chunk) => { 
-    //     body += chunk;
-    // });
-
-    // 3. Listen for end events
-    // req.on("end", () => { 
-    //     try {
-    //         params = JSON.parse(body);              
-    //     } catch (e) {
-    //         responseWithError(res, 400, "Invalid JSON");
-    //         return;
-    //     }
-    //     const maxChirpLength = 140;
-    //     if (params.body.length > maxChirpLength) {
-    //         responseWithError(res, 400, "Chirp is too long");
-    //         return;
-    //     }
-    //     responseWithJSON(res, 200, { valid: true });
-    // });
+    return cleaned;
 }
+
+

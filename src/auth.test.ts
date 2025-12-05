@@ -1,7 +1,15 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { hashPassword, checkPasswordHash, makeJWT, validateJWT } from "./auth.js";
-import { UserNotAuthenticatedError } from "./api/errors.js";
+import { 
+  hashPassword, 
+  checkPasswordHash, 
+  makeJWT, 
+  validateJWT, 
+  extractBearerToken 
+} from "./auth.js";
+import { UserNotAuthenticatedError, BadRequestError} from "./api/errors.js";
 
+
+// --------------------------------------------------- Test Password Hashing
 
 describe("Password Hashing", () => {
   const password1 = "correctPassword123!";
@@ -41,6 +49,8 @@ describe("Password Hashing", () => {
 });
 
 
+// ----------------------------------------------------- Test JWT Functions
+
 describe("JWT Functions", async () => {
   const secret = "secret";
   const wrongSecret = "wrong_secret";
@@ -64,5 +74,39 @@ describe("JWT Functions", async () => {
   it("should throw an error when the token is signed with a wrong secret", async () => {
     expect(() => validateJWT(validToken, wrongSecret))
       .toThrow(UserNotAuthenticatedError,);
+  });
+});
+
+
+// -------------------------------------------- Test Extract Bearer Token
+
+describe("Extract Bearer Token", async () => {
+  const token = "mySecretToken";
+
+  it("should extract the token from a valid header", () => {
+    const header = `Bearer ${token}`;
+    const result = extractBearerToken(header);
+    expect(result).toBe(token);
+  });
+
+  it("should extract the token even if there are extra parts", () => {
+    const header = `Bearer ${token} extra-data`;
+    const result = extractBearerToken(header);
+    expect(result).toBe(token);
+  });
+
+  it("should throw a BadRequestError if the header does not contain at least two parts", () => {
+    const header = "Bearer";
+    expect(() => extractBearerToken(header)).toThrow(BadRequestError);
+  });
+
+  it("should throw a BadRequestError if the header does not start with 'Bearer'", () => {
+    const header = "Basic mySecretToken";
+    expect(() => extractBearerToken(header)).toThrow(BadRequestError);
+  });
+
+  it("should throw a BadRequestError if the header is an empty string", () => {
+    const header = "";
+    expect(() => extractBearerToken(header)).toThrow(BadRequestError);
   });
 });

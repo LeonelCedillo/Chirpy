@@ -1,7 +1,8 @@
 import argon2 from "argon2";
 import jwt  from "jsonwebtoken"; 
+import crypto from "crypto";
 import { Request } from "express";
-import { JwtPayload } from "jsonwebtoken";
+import { type JwtPayload } from "jsonwebtoken";
 import { BadRequestError, UserNotAuthenticatedError } from "./api/errors.js";
 
 
@@ -49,22 +50,19 @@ export function validateJWT(tokenString: string, secret: string): string {
     } catch (e) {
         throw new UserNotAuthenticatedError("Invalid token");
     }
-
     if (decoded.iss !== TOKEN_ISSUER) {
         throw new UserNotAuthenticatedError("Invalid issuer");
     }
-
     if (!decoded.sub) {
         throw new UserNotAuthenticatedError("No user ID in token");
     }
-
     const userId = decoded.sub;
     return userId;
-    
 }
 
 
 export function getBearerToken(req: Request): string {
+    // Authorization: Bearer <token>
     const authHeader = req.get("Authorization");
     if (!authHeader) {
         throw new BadRequestError("Missing autherization header");
@@ -72,7 +70,7 @@ export function getBearerToken(req: Request): string {
     return extractBearerToken(authHeader);
 }
 
-export function extractBearerToken(header: string) {
+export function extractBearerToken(header: string): string {
     // Expected format: "Bearer TOKEN_STRING"
     const splitAuth = header.split(" ");
     if (splitAuth.length < 2 || splitAuth[0] !== "Bearer") {
@@ -80,4 +78,10 @@ export function extractBearerToken(header: string) {
     }
     const token = splitAuth[1];
     return token
+}
+
+
+// Generate a random 256-bit (32-byte) hex-encoded string
+export function makeRefreshToken (): string {
+    return crypto.randomBytes(32).toString("hex");
 }

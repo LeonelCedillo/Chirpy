@@ -3,11 +3,11 @@ import postgres from "postgres";
 import { config } from "./config.js";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
-import { handlerLogin, handlerRefresh, handlerRevoke } from "./api/auth.js";
 import { handlerReset } from "./api/reset.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReadiness } from "./api/readiness.js";
-import { handlerUsersCreate } from "./api/users.js";
+import { handlerUsersCreate, handlerUsersUpdate } from "./api/users.js";
+import { handlerLogin, handlerRefresh, handlerRevoke } from "./api/auth.js";
 import { handlerChirpsCreate, handlerChirpsRetrieve, handlerChirpsGet } from "./api/chirps.js";
 import { errorMiddleWare, middlewareMetricsInc, middlewareLogResponses } from "./api/middleware.js";
 
@@ -38,6 +38,9 @@ app.post("/admin/reset", (req, res, next) => {
 });
 app.post("/api/users", (req, res, next) => {
   Promise.resolve(handlerUsersCreate(req, res)).catch(next);
+});
+app.put("/api/users", (req, res, next) => {
+  Promise.resolve(handlerUsersUpdate(req, res)).catch(next);
 });
 app.post("/api/chirps", (req, res, next) => {
   Promise.resolve(handlerChirpsCreate(req, res)).catch(next);

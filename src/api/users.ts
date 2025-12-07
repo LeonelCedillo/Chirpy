@@ -2,11 +2,10 @@ import type { Request, Response } from "express";
 import { config } from "../config.js";
 import { NewUser } from "src/db/schema.js";
 import { hashPassword } from "../auth.js";
+import { BadRequestError } from "./errors.js";
 import { responseWithJSON } from "./json.js";
 import { getBearerToken, validateJWT } from "../auth.js";
 import { createUser, updateUser } from "../db/queries/users.js";
-import { BadRequestError, UserNotAuthenticatedError } from "./errors.js";
-
 
 
 export type UserResponse = Omit<NewUser, "hashedPassword">;

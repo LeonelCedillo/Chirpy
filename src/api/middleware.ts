@@ -37,10 +37,10 @@ export function errorMiddleWare(err: Error, _: Request, res: Response, __: NextF
     statusCode = 401;
     message = err.message;
   } else if (err instanceof UserForbiddenError) {
-    statusCode = 402;
+    statusCode = 403;
     message = err.message;
   } else if (err instanceof NotFoundError) {
-    statusCode = 403;
+    statusCode = 404;
     message = err.message;
   }
 

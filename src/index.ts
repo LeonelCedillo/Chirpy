@@ -6,6 +6,7 @@ import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { handlerReset } from "./api/reset.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReadiness } from "./api/readiness.js";
+import { handlerWebhook } from "./api/webhooks.js";
 import { handlerUsersCreate, handlerUsersUpdate } from "./api/users.js";
 import { handlerLogin, handlerRefresh, handlerRevoke } from "./api/auth.js";
 import { errorMiddleWare, middlewareMetricsInc, middlewareLogResponses } from "./api/middleware.js";
@@ -35,6 +36,9 @@ app.get("/admin/metrics", (req, res, next) => {
 });
 app.post("/admin/reset", (req, res, next) => {
   Promise.resolve(handlerReset(req, res)).catch(next);
+});
+app.post("/api/polka/webhooks", (req, res, next) => {
+  Promise.resolve(handlerWebhook(req, res)).catch(next);
 });
 
 // ------------------------ Users --------------------------------

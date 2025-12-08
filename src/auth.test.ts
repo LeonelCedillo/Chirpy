@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeAll } from "vitest";
+import { UserNotAuthenticatedError, BadRequestError} from "./api/errors.js";
 import { 
   hashPassword, 
   checkPasswordHash, 
   makeJWT, 
   validateJWT, 
-  extractBearerToken 
+  extractBearerToken,
+  extractApiKey
 } from "./auth.js";
-import { UserNotAuthenticatedError, BadRequestError} from "./api/errors.js";
 
 
 // --------------------------------------------------- Test Password Hashing
@@ -108,5 +109,39 @@ describe("Extract Bearer Token", async () => {
   it("should throw a BadRequestError if the header is an empty string", () => {
     const header = "";
     expect(() => extractBearerToken(header)).toThrow(BadRequestError);
+  });
+});
+
+
+// ----------------------------------------------- Test Extract Api Key
+
+describe("extractApiKey", () => {
+  const apiKey = "myApiKey";
+
+  it("should extract the API Key from a valid header", () => {
+    const header = `ApiKey ${apiKey}`;
+    const result = extractApiKey(header)
+    expect(result).toBe(apiKey);
+  });
+
+  it("should extract the token even if there are extra parts", () => {
+    const header = `ApiKey ${apiKey} extra-data`;
+    const result = extractApiKey(header)
+    expect(result).toBe(apiKey);
+  });
+
+  it("should throw a BadRequestError if the header does not contain at least two parts", () => {
+    const header = "ApiKey";
+    expect(() => extractApiKey(header)).toThrow(BadRequestError);
+  });
+
+  it('should throw a BadRequestError if the header does not start with "ApiKey"', () => {
+    const header = "Basic mySecretApiKey";
+    expect(() => extractApiKey(header)).toThrow(BadRequestError);
+  });
+
+  it("should throw a BadRequestError if the header is an empty string", () => {
+    const header = "";
+    expect(() => extractApiKey(header)).toThrow(BadRequestError);
   });
 });

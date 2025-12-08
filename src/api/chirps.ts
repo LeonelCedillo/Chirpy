@@ -56,10 +56,11 @@ export async function handlerChirpsRetrieve(req: Request, res: Response) {
     authorId = authorIdQuery;
     }
     const chirps = await getChirps();
-    if (!chirps) {
-        console.log("No chirps found");
-    }
     const filteredChirps = chirps.filter((chirp) => chirp.userId === authorId || authorId === "");
+    filteredChirps.sort((a, b) => req.query.sort === "desc"
+        ? b.createdAt.getTime() - a.createdAt.getTime()
+        : a.createdAt.getTime() - b.createdAt.getTime()
+    );
     responseWithJSON(res, 200, filteredChirps);
 }
 

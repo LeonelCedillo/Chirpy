@@ -16,8 +16,7 @@ export async function createChirp(chirp: NewChirp) {
 export async function getChirps() {
     const result = await db
         .select()
-        .from(chirps)
-        .orderBy(asc(chirps.createdAt));
+        .from(chirps);
     return result
 }
 

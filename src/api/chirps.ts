@@ -49,12 +49,18 @@ function getCleanedBody(body: string, badWords: string[]) {
 }
 
 
-export async function handlerChirpsRetrieve(_: Request, res: Response) {
+export async function handlerChirpsRetrieve(req: Request, res: Response) {
+    let authorId = "";
+    let authorIdQuery = req.query.authorId;
+    if (typeof authorIdQuery === "string") {
+    authorId = authorIdQuery;
+    }
     const chirps = await getChirps();
     if (!chirps) {
         console.log("No chirps found");
     }
-    responseWithJSON(res, 200, chirps);
+    const filteredChirps = chirps.filter((chirp) => chirp.userId === authorId || authorId === "");
+    responseWithJSON(res, 200, filteredChirps);
 }
 
 

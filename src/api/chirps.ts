@@ -3,7 +3,7 @@ import { config } from "../config.js";
 import { responseWithJSON } from "./json.js";
 import { getBearerToken, validateJWT } from "../auth.js";
 import { createChirp, getChirps, getChirp, deleteChirp } from "../db/queries/chirps.js";
-import { BadRequestError, NotFoundError, UserForbiddenError, UserNotAuthenticatedError } from "./errors.js";
+import { BadRequestError, NotFoundError, UserForbiddenError } from "./errors.js";
 
 
 export async function handlerChirpsCreate(req: Request, res: Response) {

@@ -30,18 +30,21 @@ and JSON Web Tokens in the authentication logic.
 
 4. Create the database (example: *chirpy*).
 
-5. Create a .env file with the following variables: 
-PORT="This server's port"
-DB_URL="Database connection string"
-PLATFORM="dev" - resets are only allowed in this environment - change it in api/reset.ts
-JWT_SECRET="secret for JSON Web Token"
-POLKA_KEY="Key from the Polka webhook"
+5. Create a .env file with the following variables: <br>
+PORT="This server's port"<br>
+DB_URL="Database connection string"<br>
+PLATFORM="dev" - resets are only allowed in this environment - change it in api/reset.ts<br>
+JWT_SECRET="secret for JSON Web Token"<br>
+POLKA_KEY="Key from the Polka webhook"<br>
 
 6. To start the server run:
 `npm run dev`
-- This also applies the migrations.
+This also applies the migrations.
 
-# API for Chirpy
+<br>
+<br>
+
+# API for Chirpy<br>
 
 ## Users endpoints:
 
@@ -67,6 +70,7 @@ Response body:
     }
 ```
 
+<br>
 
 ### PUT /api/users
 
@@ -93,9 +97,9 @@ Response body:
         "isChirpyRed": false
     }
 ```
+<br>
 
-
-## Chirps endpoints:
+## Chirps endpoints:<br>
 
 ### POST /api/chirps
 
@@ -121,7 +125,7 @@ Response body:
         "userId": "user_id"
     }
 ```
-
+<br>
 
 ### GET /api/chirps
 
@@ -143,14 +147,14 @@ Response body:
     }
 ]
 ```
-
+<br>
 
 ### GET /api/chirps/:chirpId
 
 Returns a single chirp by its ID.
 
 Path parameter:
-```:chirpId``
+`:chirpId`
 
 Example request:
 GET /api/chirps/abc123
@@ -165,7 +169,7 @@ Response body:
         "userId": "user_id"
     }
 ```
-
+<br>
 
 ### DELETE /api/chirps/:chirpId
 
@@ -175,7 +179,7 @@ Authentication (Authorization header):
 ```Authorization: Bearer <access_token>```
 
 Path parameter:
-```:chirpId``
+`:chirpId`
 
 Example request:
 DELETE /api/chirps/abc123
@@ -183,8 +187,9 @@ DELETE /api/chirps/abc123
 Response:
 204 No Content
 
+<br>
 
-## Authentication endpoints:
+## Authentication endpoints:<br>
 
 ### POST /api/login
 
@@ -211,6 +216,7 @@ Response body:
     }
 ```
 
+<br>
 
 ### POST /api/refresh
 
@@ -226,6 +232,7 @@ Response body:
     }
 ```
 
+<br>
 
 ### POST /api/revoke
 
